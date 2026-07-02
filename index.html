@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商務英文流暢度訓練 · Vito</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --surface: #171c24;
+    --surface-2: #202834;
+    --border: #2c3644;
+    --text: #e9edf2;
+    --text-dim: #98a4b3;
+    --accent: #38b6ff;
+    --accent-dim: #1f6e9e;
+    --green: #3ecf8e;
+    --amber: #f5b545;
+    --red: #ff6b6b;
+    --purple: #b28dff;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  #app { max-width: 760px; margin: 0 auto; padding: 20px 16px 90px; }
+  h1 { font-size: 1.35rem; font-weight: 700; }
+  h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; }
+  button {
+    font-family: inherit; cursor: pointer; border: none; border-radius: 10px;
+    font-size: 1rem; transition: transform .08s, background .15s, opacity .15s;
+  }
+  button:active { transform: scale(.97); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: #04222f; padding: 13px 22px; font-weight: 700; }
+  .btn-ghost { background: var(--surface-2); color: var(--text); padding: 11px 18px; border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: #042; padding: 12px 18px; font-weight: 600; }
+  .btn-red { background: var(--red); color: #300; padding: 12px 18px; font-weight: 600; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .dim { color: var(--text-dim); }
+  .small { font-size: .84rem; }
+  .center { text-align: center; }
+  .mt { margin-top: 16px; } .mb { margin-bottom: 16px; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .75rem; font-weight: 600; background: var(--surface-2); color: var(--text-dim); }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .nav { display: flex; gap: 6px; }
+  .nav button { background: transparent; color: var(--text-dim); padding: 8px 12px; font-size: .9rem; }
+  .nav button.active { background: var(--surface-2); color: var(--text); }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 10px; text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1.1; }
+  .stat-label { font-size: .78rem; color: var(--text-dim); margin-top: 3px; }
+
+  .scen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 12px; }
+  .scen-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; text-align: left; color: var(--text); display: flex; flex-direction: column; gap: 6px;
+  }
+  .scen-card:hover { border-color: var(--accent-dim); background: var(--surface-2); }
+  .scen-icon { font-size: 1.7rem; }
+  .scen-title { font-weight: 700; font-size: 1.02rem; }
+  .scen-meta { font-size: .78rem; color: var(--text-dim); }
+  .scen-best { font-size: .82rem; color: var(--green); font-weight: 700; }
+
+  /* Briefing */
+  .brief-role { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; margin: 8px 0; font-size: .95rem; }
+
+  /* Conversation */
+  .convo { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .bubble { max-width: 86%; padding: 11px 14px; border-radius: 14px; line-height: 1.55; }
+  .bubble .zh { display: block; font-size: .82rem; color: var(--text-dim); margin-top: 3px; }
+  .bubble.partner { align-self: flex-start; background: var(--surface-2); border-bottom-left-radius: 4px; }
+  .bubble.me { align-self: flex-end; background: var(--accent-dim); border-bottom-right-radius: 4px; }
+  .bubble.me .zh { color: #cfe8f7; }
+  .round-score { align-self: flex-end; font-size: .78rem; color: var(--text-dim); margin-top: -4px; }
+  .round-score b { color: var(--green); }
+
+  .countdown-wrap { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin: 10px 0 14px; }
+  .countdown-bar { height: 100%; background: var(--green); width: 100%; }
+  .countdown-bar.hurry { background: var(--red); }
+
+  .opt-card {
+    display: block; width: 100%; text-align: left; background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 12px; padding: 13px 15px; margin-bottom: 10px;
+  }
+  .opt-card:hover { border-color: var(--accent-dim); }
+  .opt-card.matched { border-color: var(--green); background: rgba(62,207,142,.1); }
+  .opt-en { font-weight: 600; font-size: 1.05rem; }
+  .opt-zh { font-size: .84rem; color: var(--text-dim); margin-top: 2px; }
+  .opt-reg { font-size: .72rem; color: var(--amber); font-weight: 700; }
+
+  .listen-hint { text-align: center; color: var(--text-dim); font-size: .9rem; padding: 8px 0; }
+  .listen-hint .mic-dot { display: inline-block; width: 10px; height: 10px; background: var(--red); border-radius: 50%; margin-right: 7px; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+
+  /* Result */
+  .score-ring {
+    width: 148px; height: 148px; border-radius: 50%; margin: 12px auto;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    background: conic-gradient(var(--green) calc(var(--p) * 1%), var(--surface-2) 0);
+  }
+  .score-ring .inner {
+    width: 118px; height: 118px; border-radius: 50%; background: var(--surface);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+  }
+  .score-ring .num { font-size: 2.4rem; font-weight: 800; color: var(--green); line-height: 1; }
+  .score-ring .lbl { font-size: .75rem; color: var(--text-dim); }
+  .metric-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-val { font-weight: 700; }
+
+  .weak-item { background: var(--surface-2); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .weak-item .en { font-size: .95rem; font-weight: 600; }
+  .weak-item .sc { color: var(--red); font-weight: 700; white-space: nowrap; }
+
+  /* Shadow mode */
+  .shadow-line { background: var(--surface-2); border-radius: 10px; padding: 13px 15px; margin-bottom: 10px; }
+  .shadow-en { font-weight: 600; font-size: 1.08rem; }
+  .speed-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .speed-tabs button { background: var(--surface-2); color: var(--text-dim); padding: 8px 14px; font-size: .9rem; }
+  .speed-tabs button.sel { background: var(--purple); color: #1d0f38; font-weight: 700; }
+
+  .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); gap: 10px; }
+  .setting-row:last-child { border-bottom: none; }
+  .toggle-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .toggle-group button { background: var(--surface-2); color: var(--text-dim); padding: 8px 13px; font-size: .88rem; }
+  .toggle-group button.sel { background: var(--accent); color: #04222f; font-weight: 700; }
+
+  .banner { padding: 11px 15px; border-radius: 10px; font-size: .88rem; margin-bottom: 14px; }
+  .banner.warn { background: rgba(245,181,69,.13); border: 1px solid var(--amber); color: var(--amber); }
+  .banner.info { background: rgba(56,182,255,.1); border: 1px solid var(--accent-dim); color: var(--accent); }
+  .gap-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   商務情境對話樹 (SCENARIOS) — 8 情境，內嵌於程式
+   節點: { partner, partnerZh, options:[{en,zh,register,next}] } 或 { partner, partnerZh, end:true }
+   ========================================================================= */
+const SCENARIOS = [
+{
+  id: "interview", icon: "🧑‍💼", title: "求職面試",
+  desc: "你正在面試一份業務主管職缺，面試官想了解你的背景與強項。",
+  yourRole: "求職者", partnerRole: "面試官 (Ms. Carter)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "Thanks for coming in today. Tell me a little about yourself.",
+      partnerZh: "謝謝你今天過來。先簡單自我介紹一下。",
+      options: [
+        { en: "I've spent five years in B2B sales, and I consistently hit the top of my team.",
+          zh: "我做了五年 B2B 業務，業績一直是團隊前段班。", register: "自信·精練", next: "n2a" },
+        { en: "Sure. My background is in sales, and what drives me is building long-term client relationships.",
+          zh: "好的。我的背景是業務，驅動我的是經營長期的客戶關係。", register: "親和·穩健", next: "n2b" }
+      ] },
+    n2a: { partner: "Impressive numbers. What would you say sets you apart from other candidates?",
+      partnerZh: "數字很亮眼。你覺得自己和其他人選最大的差別在哪？",
+      options: [
+        { en: "I close deals others walk away from, because I dig into what the client actually needs.",
+          zh: "別人放掉的案子我能收，因為我會挖出客戶真正的需求。", register: "強勢·亮點", next: "n3" },
+        { en: "I'd say my follow-through. I never let a lead go cold.",
+          zh: "我會說是我的執行貫徹力，我從不讓商機冷掉。", register: "務實", next: "n3" }
+      ] },
+    n2b: { partner: "That's great to hear. Can you give me a concrete example of that?",
+      partnerZh: "很高興聽到這點。可以給我一個具體的例子嗎？",
+      options: [
+        { en: "Absolutely. Last year I turned an unhappy client into our biggest repeat account.",
+          zh: "當然。去年我把一位不滿的客戶變成我們最大的回頭客。", register: "故事·具體", next: "n3" },
+        { en: "Of course. One client stayed with us for four years mainly because of the trust we built.",
+          zh: "當然。有位客戶跟了我們四年，主要就是因為彼此建立的信任。", register: "溫和·可信", next: "n3" }
+      ] },
+    n3: { partner: "And on the flip side, what would you say is your biggest weakness?",
+      partnerZh: "那反過來說，你覺得自己最大的弱點是什麼？",
+      options: [
+        { en: "I used to take on too much myself. I've learned to delegate and trust my team.",
+          zh: "我以前什麼都往身上扛，現在學會授權並信任團隊。", register: "誠實·成長", next: "n4" },
+        { en: "Honestly, I can be impatient with slow processes, so I've built systems to manage that.",
+          zh: "老實說我對緩慢的流程會沒耐心，所以我建立了制度來管理這點。", register: "直白·對策", next: "n4" }
+      ] },
+    n4: { partner: "Good self-awareness. Why do you want to leave your current company?",
+      partnerZh: "很有自我覺察。你為什麼想離開現在的公司？",
+      options: [
+        { en: "I've grown as far as I can there. I'm looking for a bigger challenge, and this role is exactly that.",
+          zh: "我在那裡已成長到頂了。我在找更大的挑戰，而這個職位正是。", register: "正向·企圖心", next: "n5" },
+        { en: "It's a great team, but the market they serve is shrinking, and I want to be where the growth is.",
+          zh: "團隊很好，但他們服務的市場在萎縮，我想去有成長性的地方。", register: "理性·市場觀", next: "n5" }
+      ] },
+    n5: { partner: "That makes sense. Do you have any questions for me before we wrap up?",
+      partnerZh: "有道理。結束前你有什麼想問我的嗎？",
+      options: [
+        { en: "Yes — what does success look like in this role after the first six months?",
+          zh: "有——這個職位前六個月做到什麼樣子算成功？", register: "高階·必問句", next: "end" },
+        { en: "I'd love to know what you enjoy most about working here.",
+          zh: "我想知道你在這裡工作最喜歡的是什麼。", register: "親和·拉近", next: "end" }
+      ] },
+    end: { partner: "Great question. We'll be in touch within the week. Thanks again for coming in.",
+      partnerZh: "好問題。我們一週內會跟你聯絡，再次謝謝你今天過來。", end: true }
+  }
+},
+{
+  id: "meeting", icon: "🗣️", title: "會議發言",
+  desc: "部門會議上討論下一季的行銷預算，你要表達立場、回應質疑。",
+  yourRole: "團隊成員", partnerRole: "主管 (David)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "Before we move on — does anyone have thoughts on shifting more budget to digital?",
+      partnerZh: "在進下一項之前——有人對把更多預算移到數位有想法嗎？",
+      options: [
+        { en: "I'd like to jump in here. I think we should test it with twenty percent first.",
+          zh: "我想插個話。我認為應該先用百分之二十來測試。", register: "主動·提案", next: "n2a" },
+        { en: "May I add something? Our digital numbers have been strong for two quarters now.",
+          zh: "我可以補充一下嗎？我們的數位數據已經連續兩季表現強勁。", register: "禮貌·數據", next: "n2b" }
+      ] },
+    n2a: { partner: "Twenty percent? Walk me through your reasoning on that number.",
+      partnerZh: "百分之二十？說說你這個數字的理由。",
+      options: [
+        { en: "It's big enough to get real data, but small enough that we can pull back if it flops.",
+          zh: "這規模夠大能拿到真實數據，又小到失敗時能收手。", register: "邏輯·風控", next: "n3" },
+        { en: "Our competitors moved thirty last year. Twenty keeps us competitive without betting the farm.",
+          zh: "競品去年移了三成。兩成能保持競爭力又不會孤注一擲。", register: "市場對標", next: "n3" }
+      ] },
+    n2b: { partner: "Strong how? Give me the headline numbers.",
+      partnerZh: "怎麼個強法？給我重點數字。",
+      options: [
+        { en: "Cost per lead is down forty percent, and conversion is up almost a third.",
+          zh: "單一名單成本降了四成，轉換率提升近三分之一。", register: "數據·精準", next: "n3" },
+        { en: "In short, digital is bringing in leads at less than half the cost of print.",
+          zh: "簡單說，數位帶進名單的成本不到平面的一半。", register: "簡明·對比", next: "n3" }
+      ] },
+    n3: { partner: "Okay. But Sarah raised a fair point — won't this cannibalize our retail partnerships?",
+      partnerZh: "好。但 Sarah 提的有道理——這不會侵蝕我們的零售夥伴關係嗎？",
+      options: [
+        { en: "That's a fair concern, but the data suggests the two channels reach different buyers.",
+          zh: "這是合理的顧慮，但數據顯示這兩個渠道觸及的是不同買家。", register: "接球·反證", next: "n4" },
+        { en: "I hear that, and I'd propose we ring-fence the retail budget so partners aren't affected.",
+          zh: "我理解，我會提議把零售預算圈起來保護，讓夥伴不受影響。", register: "高階·提配套", next: "n4" }
+      ] },
+    n4: { partner: "Reasonable. If we green-light this, who owns it and when do we see results?",
+      partnerZh: "合理。如果我們放行，這由誰負責？什麼時候看得到結果？",
+      options: [
+        { en: "I'm happy to own it. Give me eight weeks and I'll report back with hard numbers.",
+          zh: "我很樂意負責。給我八週，我會帶著具體數字回報。", register: "扛責·期限", next: "n5" },
+        { en: "I can take the lead, with a mid-point check-in at week four so there are no surprises.",
+          zh: "我可以主導，第四週做期中檢查，確保不會有意外。", register: "穩健·透明", next: "n5" }
+      ] },
+    n5: { partner: "Alright, I like the energy. Send me a one-pager by Friday and we'll take it to the board.",
+      partnerZh: "好，我喜歡這股衝勁。週五前給我一頁摘要，我們帶去董事會。",
+      options: [
+        { en: "Will do. You'll have it in your inbox by Thursday afternoon.",
+          zh: "沒問題。週四下午前就會寄到你信箱。", register: "俐落·超前", next: "end" },
+        { en: "Understood. I'll loop in finance so the numbers are airtight.",
+          zh: "了解。我會拉財務進來，確保數字滴水不漏。", register: "高階·嚴謹", next: "end" }
+      ] },
+    end: { partner: "Perfect. Let's move on to the next item.",
+      partnerZh: "很好。我們進下一項。", end: true }
+  }
+},
+{
+  id: "present", icon: "📊", title: "簡報開場與 Q&A",
+  desc: "你向客戶團隊簡報新方案，要開場、過場、應對現場提問。",
+  yourRole: "簡報者", partnerRole: "客戶代表 (Mr. Lin)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "We're all here. Whenever you're ready, please go ahead.",
+      partnerZh: "人都到齊了。你準備好就請開始。",
+      options: [
+        { en: "Thank you all for being here. Today I'll show you how we can cut your costs by a quarter.",
+          zh: "謝謝各位撥冗。今天我會展示我們如何幫你們削減四分之一的成本。", register: "開門見山·勾子", next: "n2" },
+        { en: "Good morning, everyone. Let me start with the one problem every team in this room shares.",
+          zh: "各位早安。讓我從在座每個團隊都有的同一個問題開始。", register: "故事·抓注意", next: "n2" }
+      ] },
+    n2: { partner: "Interesting opening. Before you continue — how long will this take? We're tight on time.",
+      partnerZh: "開場很有意思。在你繼續之前——這要多久？我們時間很緊。",
+      options: [
+        { en: "Fifteen minutes for the core, then I'll leave the rest for your questions.",
+          zh: "核心內容十五分鐘，剩下的時間留給各位提問。", register: "精準·掌控", next: "n3" },
+        { en: "I'll keep it brief — if you only remember three things today, I'll make them count.",
+          zh: "我會講得精簡——如果今天只記得三件事，我會讓它們值得。", register: "高階·框架", next: "n3" }
+      ] },
+    n3: { partner: "Hold on — that projection slide. Where do these growth numbers come from?",
+      partnerZh: "等等——那張預估投影片。這些成長數字是哪來的？",
+      options: [
+        { en: "Great question. They're based on your own sales data from the past three years.",
+          zh: "好問題。這些是根據貴公司過去三年的銷售數據算出來的。", register: "接題·溯源", next: "n4" },
+        { en: "Let me break that down. The baseline is your data; the uplift is from comparable clients.",
+          zh: "讓我拆解一下。基準是你們的數據，成長幅度來自類似客戶的實績。", register: "高階·拆解", next: "n4" }
+      ] },
+    n4: { partner: "Hmm. And what happens if we don't hit those numbers in year one?",
+      partnerZh: "嗯。那如果第一年沒達到這些數字會怎樣？",
+      options: [
+        { en: "Then our fees scale down with the results. We only win when you win.",
+          zh: "那我們的費用會隨結果往下調。你們贏我們才贏。", register: "自信·綁定", next: "n5" },
+        { en: "That's exactly why we built in a quarterly review, so we can adjust course early.",
+          zh: "這正是我們設季度檢視的原因，可以及早調整方向。", register: "穩健·機制", next: "n5" }
+      ] },
+    n5: { partner: "Fair enough. Why don't you wrap up, and we'll discuss internally.",
+      partnerZh: "有道理。你收個尾吧，我們內部再討論。",
+      options: [
+        { en: "To sum up: lower costs, faster delivery, and a partner who shares the risk. I'll leave you the full deck.",
+          zh: "總結：更低的成本、更快的交付，以及一個共擔風險的夥伴。完整簡報我會留給各位。", register: "收尾·三點", next: "end" },
+        { en: "Thank you for the sharp questions. I'll send a summary today, and I'm happy to walk your team through the details.",
+          zh: "謝謝各位犀利的提問。今天我會寄出摘要，也很樂意向你們團隊詳細說明。", register: "誠懇·跟進", next: "end" }
+      ] },
+    end: { partner: "Thank you. That was clear and to the point. We'll get back to you next week.",
+      partnerZh: "謝謝，講得清楚又切中要點。我們下週回覆你。", end: true }
+  }
+},
+{
+  id: "concall", icon: "📞", title: "電話視訊會議",
+  desc: "跨國視訊會議：開場寒暄、處理訊號問題、確認行動項目。",
+  yourRole: "與會者", partnerRole: "海外同事 (Emma)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "Hi! Can you hear me okay? I think we lost you for a second there.",
+      partnerZh: "嗨！聽得到嗎？剛剛你好像斷了一下。",
+      options: [
+        { en: "You're coming through loud and clear now. Sorry, my connection dropped for a moment.",
+          zh: "現在非常清楚。抱歉，我的連線剛剛斷了一下。", register: "標準·會議用語", next: "n2" },
+        { en: "Yes, I'm back. Apologies — the office Wi-Fi is acting up today.",
+          zh: "有，我回來了。抱歉——今天辦公室 Wi-Fi 不太穩。", register: "輕鬆·自嘲", next: "n2" }
+      ] },
+    n2: { partner: "No worries at all. How's everything on your end? I heard you had a long weekend.",
+      partnerZh: "完全沒關係。你那邊都好嗎？聽說你們剛放連假。",
+      options: [
+        { en: "It was great, thanks for asking. Recharged and ready — shall we dive in?",
+          zh: "很棒，謝謝關心。充飽電了——我們開始吧？", register: "俐落·轉正題", next: "n3" },
+        { en: "Yes, we did! It was lovely. Anyway, I know you're busy, so let's get started.",
+          zh: "對啊！很愉快。總之我知道你很忙，我們開始吧。", register: "親和", next: "n3" }
+      ] },
+    n3: { partner: "So, on the launch timeline — we're seeing a two-week delay from the vendor side. Thoughts?",
+      partnerZh: "關於上市時程——供應商那邊會延兩週。你怎麼看？",
+      options: [
+        { en: "Let's not push the launch. Can we run the vendor piece in parallel with testing?",
+          zh: "先不要延後上市。供應商那部分能不能跟測試並行？", register: "解題·並行", next: "n4" },
+        { en: "Two weeks is manageable if we flag it to the client now rather than later.",
+          zh: "兩週還撐得住，前提是現在就跟客戶說，而不是拖到之後。", register: "務實·透明", next: "n4" }
+      ] },
+    n4: { partner: "Sorry, you cut out again — could you repeat the last part?",
+      partnerZh: "抱歉，你又斷了——最後那段可以再說一次嗎？",
+      options: [
+        { en: "No problem. I was saying we should inform the client right away, not after the fact.",
+          zh: "沒問題。我是說我們應該立刻通知客戶，而不是事後才講。", register: "重述·耐心", next: "n5" },
+        { en: "Sure — in short: tell the client now. I'll also put it in the chat in case I drop again.",
+          zh: "好——簡單說：現在就告訴客戶。我也會打在聊天室，以防我又斷線。", register: "高階·備援", next: "n5" }
+      ] },
+    n5: { partner: "Got it, thanks. So to wrap up — can you own the client update, and I'll handle the vendor?",
+      partnerZh: "收到，謝謝。那收個尾——客戶更新你負責，供應商我來處理，可以嗎？",
+      options: [
+        { en: "Works for me. I'll send the update today and copy you on it.",
+          zh: "沒問題。我今天就發更新，並副本給你。", register: "確認·行動", next: "end" },
+        { en: "Sounds good. Let's do a quick sync on Friday to make sure we're aligned.",
+          zh: "好的。我們週五快速對一下，確保方向一致。", register: "高階·跟進", next: "end" }
+      ] },
+    end: { partner: "Perfect. Thanks everyone — talk on Friday. Bye!",
+      partnerZh: "太好了。謝謝大家——週五聊。掰！", end: true }
+  }
+},
+{
+  id: "nego", icon: "🤝", title: "商務談判",
+  desc: "和供應商談年度合約：報價、讓步、敲定條件。",
+  yourRole: "採購方", partnerRole: "供應商業務 (Mr. Novak)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "So, you've seen our proposal. The annual contract comes to two hundred thousand.",
+      partnerZh: "你看過我們的提案了。年約總額是二十萬。",
+      options: [
+        { en: "That's above where we need to be. What can you do on the price?",
+          zh: "這超出我們的預算範圍。價格上你能怎麼調整？", register: "直接·施壓", next: "n2a" },
+        { en: "The scope looks right, but the number doesn't work for us. Let's talk about how to close the gap.",
+          zh: "範圍是對的，但這個數字對我們行不通。談談怎麼縮小差距吧。", register: "高階·合作框架", next: "n2b" }
+      ] },
+    n2a: { partner: "We have some room, but not much. What number did you have in mind?",
+      partnerZh: "我們有一點空間，但不多。你心裡的數字是多少？",
+      options: [
+        { en: "One seventy, and we sign a two-year term instead of one.",
+          zh: "十七萬，但我們簽兩年約而不是一年。", register: "出價·給糖", next: "n3" },
+        { en: "We were budgeting around one sixty-five. Help me get this past my CFO.",
+          zh: "我們的預算大約十六萬五。幫我讓財務長點頭。", register: "軟性·借力", next: "n3" }
+      ] },
+    n2b: { partner: "I appreciate the constructive tone. Where exactly is the gap for you?",
+      partnerZh: "感謝你有建設性的態度。差距具體在哪？",
+      options: [
+        { en: "About fifteen percent. If you can meet us there, we can move fast on signing.",
+          zh: "大約百分之十五。你們能到這個位置，我們就能很快簽約。", register: "精準·加速", next: "n3" },
+        { en: "The unit price. Volume shouldn't cost us a premium — it should earn us a discount.",
+          zh: "在單價。量大不該讓我們付溢價——反而該有折扣。", register: "強勢·邏輯", next: "n3" }
+      ] },
+    n3: { partner: "Here's what I can do: five percent off, plus free onboarding. That's my best offer.",
+      partnerZh: "我能做的是：降百分之五，外加免費導入。這是我最好的條件。",
+      options: [
+        { en: "We're getting closer, but I'll need more than five to make this work.",
+          zh: "有比較接近了，但五趴不夠，這樣還做不成。", register: "堅持·不掀桌", next: "n4" },
+        { en: "If that's truly your best, then let's add quarterly reviews with a price re-opener.",
+          zh: "如果這真是你的極限，那就加上季度檢視和重啟議價條款。", register: "高階·換條件", next: "n4" }
+      ] },
+    n4: { partner: "You drive a hard bargain. Alright — eight percent off, but I need the two-year commitment.",
+      partnerZh: "你很會談。好吧——降八趴，但我需要兩年的承諾。",
+      options: [
+        { en: "Eight and two years works, provided the SLA penalties we discussed are in writing.",
+          zh: "八趴加兩年可以，前提是我們談過的服務違約條款要白紙黑字。", register: "成交·護欄", next: "n5" },
+        { en: "Deal — with one condition: we lock the renewal price cap now.",
+          zh: "成交——但有個條件：續約的價格上限現在就鎖定。", register: "俐落·鎖尾巴", next: "n5" }
+      ] },
+    n5: { partner: "That's fair. I'll have legal draft it this week. Pleasure doing business with you.",
+      partnerZh: "合理。我這週請法務擬約。跟你做生意很愉快。",
+      options: [
+        { en: "Likewise. Send the draft over and we'll turn it around within three days.",
+          zh: "彼此彼此。草約寄過來，我們三天內回覆。", register: "收尾·效率", next: "end" },
+        { en: "Same here. Looking forward to a long partnership, Mr. Novak.",
+          zh: "我也是。期待長久的合作，Novak 先生。", register: "溫暖·關係", next: "end" }
+      ] },
+    end: { partner: "Excellent. You'll have the draft by Thursday. Take care!",
+      partnerZh: "太好了。週四前你會收到草約。保重！", end: true }
+  }
+},
+{
+  id: "complaint", icon: "🧯", title: "處理客戶抱怨",
+  desc: "重要客戶因交期延誤來電抱怨，你要安撫、提解法、給承諾。",
+  yourRole: "客戶經理", partnerRole: "客戶 (Ms. Alvarez)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "This is the second delay this quarter. Frankly, I'm starting to question this partnership.",
+      partnerZh: "這是這一季第二次延誤了。老實說，我開始懷疑這段合作了。",
+      options: [
+        { en: "You're right to be frustrated, and I'm not going to make excuses. Let me fix this.",
+          zh: "你的不滿完全合理，我不會找藉口。讓我來解決。", register: "扛責·直球", next: "n2" },
+        { en: "I completely understand, and I apologize. Can I walk you through what happened and what we're doing?",
+          zh: "我完全理解，也很抱歉。我可以說明發生了什麼、以及我們正在做什麼嗎？", register: "同理·結構", next: "n2" }
+      ] },
+    n2: { partner: "Go ahead. But I've heard explanations before — what I need is my shipment.",
+      partnerZh: "說吧。但解釋我聽過了——我需要的是我的貨。",
+      options: [
+        { en: "Understood. I've split your order: sixty percent ships tomorrow, the rest by Friday.",
+          zh: "明白。我已把你的訂單拆開：六成明天出貨，其餘週五前到。", register: "行動·具體", next: "n3" },
+        { en: "Fair enough. I've escalated this to our plant manager, and your order now jumps the queue.",
+          zh: "有道理。我已上報廠長，你的訂單現在插隊優先處理。", register: "升級·優先", next: "n3" }
+      ] },
+    n3: { partner: "That helps. But how do I know this won't happen again next month?",
+      partnerZh: "這有幫助。但我怎麼知道下個月不會再來一次？",
+      options: [
+        { en: "Two changes: a dedicated buffer stock for you, and a weekly status email from me personally.",
+          zh: "兩個改變：為你保留專屬的緩衝庫存，加上我親自發的每週狀態信。", register: "制度·雙保險", next: "n4" },
+        { en: "From now on, you'll know about any risk before it becomes a delay — I'll flag it a week ahead.",
+          zh: "從現在起，任何風險在變成延誤前你就會知道——我會提前一週示警。", register: "預警·承諾", next: "n4" }
+      ] },
+    n4: { partner: "Alright. And what about the costs this delay is causing us?",
+      partnerZh: "好。那這次延誤造成我們的成本呢？",
+      options: [
+        { en: "We'll credit your next invoice for the inconvenience. I'll confirm the amount by tomorrow.",
+          zh: "我們會在你下一期帳單折抵作為補償，金額我明天前確認給你。", register: "補償·明確", next: "n5" },
+        { en: "Let me review the impact with you line by line, and we'll make it right.",
+          zh: "讓我和你逐項核對影響，我們會給你一個公道。", register: "誠意·共審", next: "n5" }
+      ] },
+    n5: { partner: "Okay. I appreciate you taking this seriously. Keep me posted.",
+      partnerZh: "好。感謝你認真看待這件事。隨時跟我更新。",
+      options: [
+        { en: "You have my word. I'll call you tomorrow at ten with the tracking numbers.",
+          zh: "我保證。明天十點我會打給你，附上貨運追蹤號碼。", register: "承諾·具體時點", next: "end" },
+        { en: "Absolutely. And thank you for your patience — we won't take it for granted.",
+          zh: "一定。也謝謝你的耐心——我們不會視為理所當然。", register: "感謝·收心", next: "end" }
+      ] },
+    end: { partner: "Good. I'll expect your call tomorrow. Goodbye.",
+      partnerZh: "好。我等你明天的電話。再見。", end: true }
+  }
+},
+{
+  id: "smalltalk", icon: "☕", title: "職場 Small Talk",
+  desc: "茶水間遇到新來的外籍同事，寒暄、聊週末、稱讚對方。",
+  yourRole: "同事", partnerRole: "新同事 (Jake)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "Hey! We haven't officially met — I'm Jake, just joined the product team.",
+      partnerZh: "嘿！我們還沒正式認識——我是 Jake，剛加入產品團隊。",
+      options: [
+        { en: "Welcome aboard, Jake! I'm on the sales side. How's your first week treating you?",
+          zh: "歡迎加入，Jake！我是業務端的。第一週還適應嗎？", register: "熱情·標準句", next: "n2" },
+        { en: "Nice to finally put a face to the name! I've seen you on the team emails.",
+          zh: "終於見到本人了！我在團隊信件裡看過你。", register: "道地·拉近", next: "n2" }
+      ] },
+    n2: { partner: "It's been a whirlwind, honestly. So many names to remember! How long have you been here?",
+      partnerZh: "老實說忙得團團轉，要記的名字太多了！你來多久了？",
+      options: [
+        { en: "Going on four years now. It flies by — this place keeps you on your toes.",
+          zh: "快四年了。時間過超快——這地方讓人不敢鬆懈。", register: "道地·慣用語", next: "n3" },
+        { en: "About four years. Don't worry, the name thing gets easier in a month or two.",
+          zh: "大概四年。別擔心，名字的事一兩個月就會好多了。", register: "安撫·前輩感", next: "n3" }
+      ] },
+    n3: { partner: "Good to know! Any plans for the weekend? I'm still figuring out what to do around here.",
+      partnerZh: "太好了！週末有什麼計畫嗎？我還在摸索這附近有什麼好玩的。",
+      options: [
+        { en: "I'm taking the family hiking. If you're into food, I can send you my go-to restaurant list.",
+          zh: "我要帶家人去爬山。如果你喜歡吃，我可以傳我的口袋名單給你。", register: "分享·給資源", next: "n4" },
+        { en: "Nothing big — just recharging. But you should check out the night market near the station.",
+          zh: "沒什麼大計畫——就充個電。但你該去看看車站附近的夜市。", register: "輕鬆·推薦", next: "n4" }
+      ] },
+    n4: { partner: "That would be awesome! By the way, your presentation on Monday was really sharp.",
+      partnerZh: "那太棒了！對了，你週一的簡報真的很精彩。",
+      options: [
+        { en: "That's kind of you to say! The team did the heavy lifting on the data.",
+          zh: "你人真好！數據那塊是團隊出的大力。", register: "謙虛·歸功", next: "n5" },
+        { en: "Thanks, I appreciate that! I heard you shipped some great features at your last company too.",
+          zh: "謝謝，很感謝！聽說你在上一家公司也做出很棒的功能。", register: "回讚·對等", next: "n5" }
+      ] },
+    n5: { partner: "Ha, word travels fast! Hey, I should run to a meeting — let's grab lunch sometime?",
+      partnerZh: "哈，消息傳真快！欸我要趕去開會了——改天一起吃午餐？",
+      options: [
+        { en: "Definitely. How about Thursday? I'll swing by your desk around noon.",
+          zh: "當然。週四如何？中午我去你座位找你。", register: "敲定·具體", next: "end" },
+        { en: "For sure — I'll ping you on Slack. Good luck with the meeting!",
+          zh: "沒問題——我再 Slack 你。開會順利！", register: "輕快·收尾", next: "end" }
+      ] },
+    end: { partner: "Perfect, see you then. Great meeting you!",
+      partnerZh: "太好了，到時見。很高興認識你！", end: true }
+  }
+},
+{
+  id: "manageup", icon: "📈", title: "向上溝通",
+  desc: "和主管一對一：回報進度、坦承延誤、爭取資源。",
+  yourRole: "部屬", partnerRole: "主管 (Rachel)",
+  start: "n1",
+  nodes: {
+    n1: { partner: "Thanks for grabbing time. So, where are we on the Meridian project?",
+      partnerZh: "謝謝你約這個時間。Meridian 專案現在進度如何？",
+      options: [
+        { en: "The short version: we're on track for launch, with one risk I want to flag early.",
+          zh: "簡短版：上線進度正常，但有一個風險我想提早示警。", register: "高階·先講結論", next: "n2" },
+        { en: "Overall it's going well. Development is done; we're mid-way through testing.",
+          zh: "整體順利。開發完成了，測試進行到一半。", register: "平實·狀態", next: "n2" }
+      ] },
+    n2: { partner: "Go on — what's the risk?",
+      partnerZh: "繼續說——風險是什麼？",
+      options: [
+        { en: "The data migration is running slower than planned. Worst case, it costs us a week.",
+          zh: "資料轉移比預期慢。最壞情況會多花一週。", register: "誠實·量化", next: "n3" },
+        { en: "We're short one engineer on the migration. With current staffing, quality or timeline gives.",
+          zh: "轉移那邊少一名工程師。以現在的人力，品質和時程只能保一個。", register: "直指·取捨", next: "n3" }
+      ] },
+    n3: { partner: "I'd rather hear it now than in the launch week. What do you need from me?",
+      partnerZh: "我寧願現在聽到，也不要上線那週才知道。你需要我做什麼？",
+      options: [
+        { en: "Two things: borrow Kevin for two weeks, and your sign-off to trim the nice-to-haves.",
+          zh: "兩件事：借調 Kevin 兩週，以及你同意砍掉非必要功能。", register: "具體·開清單", next: "n4" },
+        { en: "Mainly air cover. If I descope the reporting module, I need you behind that call.",
+          zh: "主要是你的支持。如果我砍掉報表模組，我需要你挺這個決定。", register: "高階·要背書", next: "n4" }
+      ] },
+    n4: { partner: "Kevin's stretched thin, but I can free him up half-time. Will that be enough?",
+      partnerZh: "Kevin 很忙，但我可以讓他撥一半時間。這樣夠嗎？",
+      options: [
+        { en: "Half-time works if we get him this week. Next week is too late to matter.",
+          zh: "一半時間可以，但要這週就到位。下週才來就沒意義了。", register: "接受·卡時點", next: "n5" },
+        { en: "Let's try it. I'll pair him with Amy so his hours go exactly where the risk is.",
+          zh: "就這麼試。我會讓他跟 Amy 搭配，把他的時數精準用在風險點上。", register: "務實·配置", next: "n5" }
+      ] },
+    n5: { partner: "Done — he's yours from Wednesday. Anything else before we wrap?",
+      partnerZh: "成交——週三起他歸你。結束前還有其他事嗎？",
+      options: [
+        { en: "One more thing: I'd like to present the results to the leadership team myself.",
+          zh: "還有一件事：成果我想親自向管理層報告。", register: "爭取·舞台", next: "end" },
+        { en: "That's everything. I'll send you a written summary of what we agreed today.",
+          zh: "就這些。我會把今天談定的事寫成摘要寄給你。", register: "收尾·留紀錄", next: "end" }
+      ] },
+    end: { partner: "Sounds good. Keep me posted, and nice work staying ahead of this.",
+      partnerZh: "很好。隨時更新我，你能走在問題前面，做得不錯。", end: true }
+  }
+}
+];
+
+/* =========================================================================
+   常數
+   ========================================================================= */
+const STORAGE_KEY = "tzg_eng_v2";
+const MATCH_THRESHOLD = 0.6;   // 判定念的是哪個選項的最低命中率
+const TARGET_WPS = 2.0;        // 目標語速 words/sec (自然商務語速約 2.2-2.5)
+const MIN_WPS = 0.8;           // 低於此語速得 0 分
+const SHADOW_SPEEDS = [0.9, 1.0, 1.15];
+
+/* =========================================================================
+   日期 / 儲存
+   ========================================================================= */
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function dayDiff(a, b) {
+  const [ay,am,ad] = a.split("-").map(Number), [by,bm,bd] = b.split("-").map(Number);
+  return Math.round((new Date(ay,am-1,ad) - new Date(by,bm-1,bd)) / 86400000);
+}
+
+let storageOK = true;
+function checkStorage() {
+  try { localStorage.setItem("__t","1"); localStorage.removeItem("__t"); return true; }
+  catch (e) { return false; }
+}
+function defaultState() {
+  return {
+    scenarios: {},
+    stats: { streak: 0, lastStudyDate: null, todaySessions: 0, totalSessions: 0 },
+    settings: { ttsRate: 1.0, responseTimeLimit: 5, selfMode: false }
+  };
+}
+function loadState() {
+  if (!storageOK) return defaultState();
+  let raw;
+  try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { return defaultState(); }
+  if (!raw) return defaultState();
+  let s;
+  try { s = JSON.parse(raw); } catch (e) { return defaultState(); }
+  const d = defaultState();
+  s.scenarios = s.scenarios || d.scenarios;
+  s.stats = Object.assign(d.stats, s.stats || {});
+  s.settings = Object.assign(d.settings, s.settings || {});
+  if (s.stats.lastStudyDate !== todayStr()) s.stats.todaySessions = 0;
+  return s;
+}
+function saveState(s) {
+  if (!storageOK) return;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+function recordSession(state, scenarioId, score) {
+  const today = todayStr();
+  const sc = state.scenarios[scenarioId] || { bestScore: 0, timesPlayed: 0, lastPlayed: null };
+  sc.timesPlayed++;
+  sc.lastPlayed = today;
+  const isRecord = score > sc.bestScore;
+  if (isRecord) sc.bestScore = score;
+  state.scenarios[scenarioId] = sc;
+
+  const last = state.stats.lastStudyDate;
+  if (last !== today) {
+    if (last && dayDiff(today, last) === 1) state.stats.streak++;
+    else state.stats.streak = 1;
+    state.stats.todaySessions = 0;
+  }
+  state.stats.lastStudyDate = today;
+  state.stats.todaySessions++;
+  state.stats.totalSessions++;
+  saveState(state);
+  return isRecord;
+}
+
+/* =========================================================================
+   評分引擎
+   ========================================================================= */
+function normalizeWords(s) {
+  return s.toLowerCase()
+    .replace(/[’']/g, "'")
+    .replace(/[^a-z0-9'\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim().split(" ").filter(Boolean);
+}
+function compareTranscript(target, heard) {
+  const tWords = normalizeWords(target);
+  const hPool = normalizeWords(heard);
+  let matched = 0;
+  const pool = hPool.slice();
+  tWords.forEach(w => {
+    const i = pool.indexOf(w);
+    if (i !== -1) { matched++; pool.splice(i, 1); }
+  });
+  const total = tWords.length || 1;
+  return { matched, total, accuracy: matched / total };
+}
+// 從選項中挑出使用者念的那句
+function matchOption(options, heard) {
+  let best = null, bestAcc = 0;
+  options.forEach((opt, idx) => {
+    const { accuracy } = compareTranscript(opt.en, heard);
+    if (accuracy > bestAcc) { bestAcc = accuracy; best = idx; }
+  });
+  return bestAcc >= MATCH_THRESHOLD ? { index: best, accuracy: bestAcc } : null;
+}
+// 單輪流暢分: 準確率 50% + 反應 25% + 語速 25%
+function roundScore(accuracy, reactionSec, limitSec, wps) {
+  const accScore = Math.max(0, Math.min(1, accuracy)) * 100;
+  const reactScore = reactionSec <= 1 ? 100
+    : Math.max(0, 100 * (1 - (reactionSec - 1) / Math.max(0.001, limitSec - 1)));
+  const speedScore = wps >= TARGET_WPS ? 100
+    : Math.max(0, 100 * (wps - MIN_WPS) / (TARGET_WPS - MIN_WPS));
+  return Math.round(accScore * 0.5 + reactScore * 0.25 + speedScore * 0.25);
+}
+
+/* =========================================================================
+   語音層
+   ========================================================================= */
+const TTS = {
+  voice: null,
+  init() {
+    if (!("speechSynthesis" in window)) return;
+    const pick = () => {
+      const vs = speechSynthesis.getVoices();
+      this.voice = vs.find(v => v.lang === "en-US" && /Google|Samantha|Microsoft/i.test(v.name))
+        || vs.find(v => v.lang === "en-US") || vs.find(v => v.lang && v.lang.startsWith("en")) || null;
+    };
+    pick();
+    speechSynthesis.onvoiceschanged = pick;
+  },
+  speak(text, rate, onend) {
+    if (!("speechSynthesis" in window)) { if (onend) onend(); return; }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    if (this.voice) u.voice = this.voice;
+    u.rate = rate || 1.0;
+    if (onend) { u.onend = onend; u.onerror = onend; }
+    speechSynthesis.speak(u);
+  },
+  stop() { if ("speechSynthesis" in window) speechSynthesis.cancel(); }
+};
+function sttSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+
+/* =========================================================================
+   App
+   ========================================================================= */
+const App = {
+  state: null, el: null, route: "home", session: null, shadow: null, _rec: null, _timers: [],
+
+  init() {
+    storageOK = checkStorage();
+    this.state = loadState();
+    this.el = document.getElementById("app");
+    TTS.init();
+    this.render();
+  },
+  clearTimers() { this._timers.forEach(t => clearInterval(t)); this._timers = []; },
+  stopRec() { if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; } },
+  go(route) {
+    this.route = route; this.session = null; this.shadow = null;
+    TTS.stop(); this.stopRec(); this.clearTimers();
+    this.render();
+  },
+  render() {
+    if (this.route === "home") this.renderHome();
+    else if (this.route === "settings") this.renderSettings();
+  },
+  topbar(active) {
+    const nav = (r, label) => `<button class="${active === r ? "active" : ""}" data-nav="${r}">${label}</button>`;
+    return `<div class="topbar"><h1>💼 商務英文流暢度</h1>
+      <div class="nav">${nav("home","首頁")}${nav("settings","設定")}</div></div>`;
+  },
+  bindNav() {
+    this.el.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => this.go(b.dataset.nav));
+  },
+
+  /* ---------- 首頁 ---------- */
+  renderHome() {
+    const s = this.state;
+    const warn = !storageOK
+      ? `<div class="banner warn">⚠️ 無法使用本機儲存（可能是無痕模式）。本次可練習，但進度不會保存。</div>` : "";
+    const cards = SCENARIOS.map(sc => {
+      const p = s.scenarios[sc.id];
+      return `<button class="scen-card" data-scen="${sc.id}">
+        <span class="scen-icon">${sc.icon}</span>
+        <span class="scen-title">${sc.title}</span>
+        <span class="scen-meta">${sc.desc}</span>
+        ${p ? `<span class="scen-best">最佳 ${p.bestScore} 分 · 練過 ${p.timesPlayed} 次</span>`
+            : `<span class="scen-meta" style="color:var(--accent)">尚未挑戰</span>`}
+      </button>`;
+    }).join("");
+    this.el.innerHTML = `
+      ${this.topbar("home")}
+      ${warn}
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-num">${s.stats.streak}</div><div class="stat-label">連續天數 🔥</div></div>
+        <div class="stat-box"><div class="stat-num">${s.stats.todaySessions}</div><div class="stat-label">今日場次</div></div>
+        <div class="stat-box"><div class="stat-num">${s.stats.totalSessions}</div><div class="stat-label">累積場次</div></div>
+      </div>
+      <h2>選一個情境開始對話</h2>
+      <div class="scen-grid">${cards}</div>
+      <p class="dim small mt">💡 提示：對方講完後，<b>限時開口</b>念出一個回應選項——反應越快、念越準越順，分數越高。</p>
+    `;
+    this.bindNav();
+    this.el.querySelectorAll("[data-scen]").forEach(b => b.onclick = () => this.renderBriefing(b.dataset.scen));
+  },
+
+  /* ---------- 情境說明 ---------- */
+  renderBriefing(scenId) {
+    const sc = SCENARIOS.find(x => x.id === scenId);
+    const p = this.state.scenarios[scenId];
+    this.el.innerHTML = `
+      ${this.topbar("home")}
+      <div class="card">
+        <div class="center" style="font-size:2.4rem">${sc.icon}</div>
+        <h2 class="center">${sc.title}</h2>
+        <p class="dim center mb">${sc.desc}</p>
+        <div class="brief-role">🧑 你的角色：<b>${sc.yourRole}</b><br>🗣️ 對方：<b>${sc.partnerRole}</b></div>
+        <div class="brief-role">⏱️ 規則：對方講完後 <b>${this.state.settings.responseTimeLimit} 秒內開口</b>，念出一個回應選項。評分＝準確率 50%＋反應速度 25%＋語速 25%。</div>
+        ${p ? `<p class="center small" style="color:var(--green)">你的最佳紀錄：${p.bestScore} 分</p>` : ""}
+        ${!sttSupported() || this.state.settings.selfMode
+          ? `<div class="banner info">目前為自評模式：念完後自己選「我念了哪句」並自評。</div>` : ""}
+        <div class="gap-btns">
+          <button class="btn-primary" id="startConvo">▶ 開始對話</button>
+          <button class="btn-ghost" id="startShadow">🔁 跟讀加速模式</button>
+          <button class="btn-ghost" data-nav="home">← 返回</button>
+        </div>
+      </div>`;
+    this.bindNav();
+    this.el.querySelector("#startConvo").onclick = () => this.startSession(scenId);
+    this.el.querySelector("#startShadow").onclick = () => this.startShadow(scenId);
+  },
+
+  /* ---------- 對話 session ---------- */
+  startSession(scenId) {
+    const sc = SCENARIOS.find(x => x.id === scenId);
+    this.session = {
+      sc, nodeId: sc.start, log: [], rounds: [],
+      phase: "partner" // partner → respond → (next)
+    };
+    this.renderConvo();
+    this.playPartner();
+  },
+
+  renderConvo(extra) {
+    const sess = this.session;
+    if (!sess) return;
+    const bubbles = sess.log.map(item => {
+      if (item.who === "partner")
+        return `<div class="bubble partner">${item.en}<span class="zh">${item.zh}</span></div>`;
+      return `<div class="bubble me">${item.en}<span class="zh">${item.zh}</span></div>
+        ${item.score != null ? `<div class="round-score">本輪 <b>${item.score}</b> 分 · 反應 ${item.reaction}s · 準確 ${Math.round(item.accuracy*100)}%</div>` : ""}`;
+    }).join("");
+    this.el.innerHTML = `
+      <div class="topbar">
+        <button class="btn-ghost" style="padding:7px 14px" id="quitBtn">← 離開</button>
+        <span class="dim small">${sess.sc.icon} ${sess.sc.title}</span>
+      </div>
+      <div class="convo">${bubbles}</div>
+      <div id="stage">${extra || ""}</div>
+    `;
+    this.el.querySelector("#quitBtn").onclick = () => {
+      if (confirm("離開對話？本場不會計分。")) this.go("home");
+    };
+    const convo = this.el.querySelector(".convo");
+    window.scrollTo(0, document.body.scrollHeight);
+  },
+
+  playPartner() {
+    const sess = this.session;
+    const node = sess.sc.nodes[sess.nodeId];
+    sess.log.push({ who: "partner", en: node.partner, zh: node.partnerZh });
+    this.renderConvo(`<div class="listen-hint">🔊 對方說話中…</div>`);
+    TTS.speak(node.partner, this.state.settings.ttsRate, () => {
+      if (!this.session || this.session.nodeId !== sess.nodeId) return;
+      if (node.end) this.finishSession();
+      else this.startRespond();
+    });
+  },
+
+  startRespond() {
+    const sess = this.session;
+    const node = sess.sc.nodes[sess.nodeId];
+    const limit = this.state.settings.responseTimeLimit;
+    const selfMode = !sttSupported() || this.state.settings.selfMode;
+    const opts = node.options.map((o, i) => `
+      <button class="opt-card" data-opt="${i}">
+        <span class="opt-reg">🔀 ${o.register}</span>
+        <div class="opt-en">${o.en}</div>
+        <div class="opt-zh">${o.zh}</div>
+      </button>`).join("");
+    this.renderConvo(`
+      <div class="countdown-wrap"><div class="countdown-bar" id="cdbar"></div></div>
+      <p class="dim small center">⏱️ ${limit} 秒內開口，念出其中一句${selfMode ? "（自評模式：念完後點你念的那句）" : ""}</p>
+      ${opts}
+      ${selfMode ? "" : `<div class="listen-hint"><span class="mic-dot"></span>麥克風聆聽中…</div>`}
+    `);
+
+    const started = performance.now();
+    let speechStartAt = null, answered = false;
+
+    // 倒數條
+    const bar = this.el.querySelector("#cdbar");
+    const tick = setInterval(() => {
+      const elapsed = (performance.now() - started) / 1000;
+      // 開口後停止倒數壓力
+      const base = speechStartAt ? (speechStartAt - started) / 1000 : elapsed;
+      const remain = Math.max(0, 1 - base / limit);
+      if (bar) {
+        bar.style.width = (remain * 100) + "%";
+        if (remain < 0.3) bar.classList.add("hurry");
+      }
+      if (!speechStartAt && elapsed > limit && !answered && !selfMode) {
+        // 逾時未開口:算最差反應,但仍繼續聽 3 秒
+        if (elapsed > limit + 6) {
+          answered = true;
+          clearInterval(tick);
+          this.stopRec();
+          this.handleTimeout();
+        }
+      }
+    }, 100);
+    this._timers.push(tick);
+
+    const finishRound = (optIndex, accuracy, reactionSec, wps, viaSelf) => {
+      if (answered) return;
+      answered = true;
+      clearInterval(tick);
+      this.stopRec();
+      this.applyRound(optIndex, accuracy, reactionSec, wps, viaSelf);
+    };
+
+    if (selfMode) {
+      // 自評模式:計時到點選為止,點了哪句就當念了哪句
+      this.el.querySelectorAll("[data-opt]").forEach(b => {
+        b.onclick = () => {
+          const t = (performance.now() - started) / 1000;
+          finishRound(parseInt(b.dataset.opt), 1.0, Math.min(t, limit + 3), TARGET_WPS, true);
+        };
+      });
+      return;
+    }
+
+    // STT 模式
+    const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new Rec();
+    this._rec = rec;
+    rec.lang = "en-US"; rec.continuous = false; rec.interimResults = false; rec.maxAlternatives = 1;
+    rec.onspeechstart = () => { if (!speechStartAt) speechStartAt = performance.now(); };
+    rec.onresult = (e) => {
+      const heard = e.results[0][0].transcript;
+      const endAt = performance.now();
+      if (!speechStartAt) speechStartAt = endAt - 1500; // 沒抓到 speechstart 的保底
+      const reaction = Math.max(0.1, (speechStartAt - started) / 1000);
+      const speakDur = Math.max(0.4, (endAt - speechStartAt) / 1000);
+      const m = matchOption(node.options, heard);
+      if (m) {
+        const words = normalizeWords(heard).length;
+        finishRound(m.index, m.accuracy, reaction, words / speakDur, false);
+      } else {
+        // 沒對上任何選項 → 顯示聽到的內容,讓使用者手動判定或重試
+        this.showNoMatch(heard, started, finishRound);
+      }
+    };
+    rec.onerror = (e) => {
+      if (answered) return;
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        clearInterval(tick);
+        this.state.settings.selfMode = true; saveState(this.state);
+        alert("麥克風權限被拒，已切換為自評模式。");
+        this.startRespond();
+      } else if (e.error !== "aborted") {
+        this.restartRec(rec);
+      }
+    };
+    rec.onend = () => { if (!answered && this._rec === rec) this.restartRec(rec); };
+    try { rec.start(); } catch (e) {}
+  },
+
+  restartRec(rec) {
+    // STT 無結果自動重啟,直到本輪結束
+    try { rec.start(); } catch (e) {
+      setTimeout(() => { if (this._rec === rec) { try { rec.start(); } catch (_){} } }, 300);
+    }
+  },
+
+  showNoMatch(heard, started, finishRound) {
+    const stage = this.el.querySelector("#stage");
+    if (!stage) return;
+    const node = this.session.sc.nodes[this.session.nodeId];
+    const hint = document.createElement("div");
+    hint.className = "banner warn";
+    hint.innerHTML = `沒對上任何選項。機器聽到：「${heard}」——再念一次，或點你剛念的那句改用手動判定。`;
+    stage.prepend(hint);
+    this.el.querySelectorAll("[data-opt]").forEach(b => {
+      b.onclick = () => {
+        const t = (performance.now() - started) / 1000;
+        const acc = compareTranscript(node.options[b.dataset.opt].en, heard).accuracy;
+        finishRound(parseInt(b.dataset.opt), Math.max(acc, 0.7), t, TARGET_WPS, true);
+      };
+    });
+  },
+
+  handleTimeout() {
+    // 完全逾時沒開口: 給 0 分回合,自動走第一個選項的分支
+    this.applyRound(0, 0, this.state.settings.responseTimeLimit + 3, 0, true, true);
+  },
+
+  applyRound(optIndex, accuracy, reactionSec, wps, viaSelf, timedOut) {
+    const sess = this.session;
+    const node = sess.sc.nodes[sess.nodeId];
+    const opt = node.options[optIndex];
+    const limit = this.state.settings.responseTimeLimit;
+    const score = timedOut ? 0 : roundScore(accuracy, reactionSec, limit, wps);
+    sess.log.push({ who: "me", en: timedOut ? "（未及時開口）" : opt.en, zh: timedOut ? "" : opt.zh,
+      score, reaction: reactionSec.toFixed(1), accuracy });
+    sess.rounds.push({ en: opt.en, zh: opt.zh, score, reaction: reactionSec, accuracy, wps, timedOut: !!timedOut });
+    sess.nodeId = opt.next;
+    this.renderConvo(`<div class="listen-hint">…</div>`);
+    setTimeout(() => { if (this.session === sess) this.playPartner(); }, 700);
+  },
+
+  /* ---------- 結算 ---------- */
+  finishSession() {
+    const sess = this.session;
+    this.clearTimers(); this.stopRec();
+    const rounds = sess.rounds;
+    const total = rounds.length
+      ? Math.round(rounds.reduce((a, r) => a + r.score, 0) / rounds.length) : 0;
+    const avgReact = rounds.length
+      ? (rounds.reduce((a, r) => a + r.reaction, 0) / rounds.length).toFixed(1) : "-";
+    const avgAcc = rounds.length
+      ? Math.round(rounds.reduce((a, r) => a + r.accuracy, 0) / rounds.length * 100) : 0;
+    const isRecord = recordSession(this.state, sess.sc.id, total);
+    const weak = rounds.filter(r => r.score < 70).sort((a, b) => a.score - b.score);
+    const weakList = weak.length ? `
+      <div class="card mt">
+        <h2>待加強句（點 🔊 可重聽）</h2>
+        ${weak.map((r, i) => `<div class="weak-item">
+          <div><div class="en">${r.en}</div><div class="dim small">${r.zh}</div></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="sc">${r.score}分</span>
+            <button class="btn-ghost" style="padding:6px 10px" data-replay="${i}">🔊</button>
+          </div>
+        </div>`).join("")}
+      </div>` : "";
+    this.el.innerHTML = `
+      ${this.topbar("home")}
+      <div class="card center">
+        <h2>${sess.sc.icon} ${sess.sc.title} — 對話完成！</h2>
+        ${isRecord && total > 0 ? `<p style="color:var(--amber);font-weight:700">🏆 新紀錄！</p>` : ""}
+        <div class="score-ring" style="--p:${total}"><div class="inner">
+          <div class="num">${total}</div><div class="lbl">流暢總分</div>
+        </div></div>
+        <div style="max-width:340px;margin:0 auto;text-align:left">
+          <div class="metric-row"><span class="dim">平均反應時間</span><span class="metric-val">${avgReact} 秒</span></div>
+          <div class="metric-row"><span class="dim">平均準確率</span><span class="metric-val">${avgAcc}%</span></div>
+          <div class="metric-row"><span class="dim">完成輪數</span><span class="metric-val">${rounds.length} 輪</span></div>
+        </div>
+        <div class="gap-btns">
+          <button class="btn-primary" id="againBtn">🔄 再玩一次</button>
+          <button class="btn-ghost" id="shadowBtn">🔁 跟讀加速</button>
+          <button class="btn-ghost" data-nav="home">回首頁</button>
+        </div>
+      </div>
+      ${weakList}
+    `;
+    this.bindNav();
+    const scId = sess.sc.id;
+    this.el.querySelector("#againBtn").onclick = () => this.startSession(scId);
+    this.el.querySelector("#shadowBtn").onclick = () => this.startShadow(scId);
+    this.el.querySelectorAll("[data-replay]").forEach(b => {
+      b.onclick = () => TTS.speak(weak[b.dataset.replay].en, this.state.settings.ttsRate);
+    });
+    this.session = null;
+  },
+
+  /* ---------- 跟讀加速模式 ---------- */
+  startShadow(scenId) {
+    const sc = SCENARIOS.find(x => x.id === scenId);
+    // 收集該情境所有使用者句 (去重)
+    const seen = new Set(), lines = [];
+    Object.values(sc.nodes).forEach(n => (n.options || []).forEach(o => {
+      if (!seen.has(o.en)) { seen.add(o.en); lines.push(o); }
+    }));
+    this.shadow = { sc, lines, speedIdx: 0 };
+    this.renderShadow();
+  },
+  renderShadow() {
+    const sh = this.shadow;
+    const speed = SHADOW_SPEEDS[sh.speedIdx];
+    this.el.innerHTML = `
+      <div class="topbar">
+        <button class="btn-ghost" style="padding:7px 14px" id="backBtn">← 返回</button>
+        <span class="dim small">🔁 跟讀加速 · ${sh.sc.title}</span>
+      </div>
+      <div class="speed-tabs">
+        ${SHADOW_SPEEDS.map((s, i) =>
+          `<button class="${i === sh.speedIdx ? "sel" : ""}" data-speed="${i}">${s}x ${i===0?"慢":i===1?"正常":"快"}</button>`).join("")}
+      </div>
+      <p class="dim small mb">點任一句 → TTS 帶讀 → 你立刻跟著念。從慢速開始，能跟上就切快一檔。</p>
+      ${sh.lines.map((l, i) => `
+        <button class="shadow-line" style="display:block;width:100%;text-align:left;border:1px solid var(--border);cursor:pointer" data-line="${i}">
+          <div class="shadow-en">🔊 ${l.en}</div>
+          <div class="dim small">${l.zh}</div>
+        </button>`).join("")}
+      <div class="gap-btns"><button class="btn-primary" id="playAll">▶ 全部連續帶讀</button></div>
+    `;
+    this.el.querySelector("#backBtn").onclick = () => this.renderBriefing(sh.sc.id);
+    this.el.querySelectorAll("[data-speed]").forEach(b => {
+      b.onclick = () => { sh.speedIdx = parseInt(b.dataset.speed); TTS.stop(); this.renderShadow(); };
+    });
+    this.el.querySelectorAll("[data-line]").forEach(b => {
+      b.onclick = () => TTS.speak(sh.lines[b.dataset.line].en, SHADOW_SPEEDS[sh.speedIdx]);
+    });
+    this.el.querySelector("#playAll").onclick = () => this.playShadowAll(0);
+  },
+  playShadowAll(i) {
+    const sh = this.shadow;
+    if (!sh || i >= sh.lines.length) return;
+    const cards = this.el.querySelectorAll("[data-line]");
+    cards.forEach(c => c.style.borderColor = "var(--border)");
+    if (cards[i]) { cards[i].style.borderColor = "var(--purple)"; cards[i].scrollIntoView({block:"center", behavior:"smooth"}); }
+    TTS.speak(sh.lines[i].en, SHADOW_SPEEDS[sh.speedIdx], () => {
+      // 留跟讀時間 ≈ 句長
+      const gap = Math.max(1500, sh.lines[i].en.split(" ").length * 380 / SHADOW_SPEEDS[sh.speedIdx]);
+      setTimeout(() => { if (this.shadow === sh) this.playShadowAll(i + 1); }, gap);
+    });
+  },
+
+  /* ---------- 設定 ---------- */
+  renderSettings() {
+    const st = this.state.settings;
+    const rateBtn = (v, l) => `<button data-rate="${v}" class="${st.ttsRate === v ? "sel" : ""}">${l}</button>`;
+    const limitBtn = (v) => `<button data-limit="${v}" class="${st.responseTimeLimit === v ? "sel" : ""}">${v} 秒</button>`;
+    this.el.innerHTML = `
+      ${this.topbar("settings")}
+      <div class="card mb">
+        <h2>語音與節奏</h2>
+        <div class="setting-row"><span class="dim">對方語速 (TTS)</span>
+          <div class="toggle-group">${rateBtn(0.85,"慢")}${rateBtn(1.0,"正常")}${rateBtn(1.15,"快")}</div></div>
+        <div class="setting-row"><span class="dim">反應時限</span>
+          <div class="toggle-group">${limitBtn(3)}${limitBtn(5)}${limitBtn(8)}</div></div>
+        <div class="setting-row"><span class="dim">自評模式<br><span class="small">不用麥克風，自己點選並自評</span></span>
+          <div class="toggle-group">
+            <button data-self="0" class="${!st.selfMode ? "sel" : ""}">語音辨識</button>
+            <button data-self="1" class="${st.selfMode ? "sel" : ""}">自評</button>
+          </div></div>
+      </div>
+      <div class="card">
+        <h2>進度</h2>
+        <div class="setting-row">
+          <span class="dim">清除所有分數與統計<br><span class="small">（此動作無法復原）</span></span>
+          <button class="btn-red" id="clearBtn">清除進度</button>
+        </div>
+        ${!storageOK ? `<div class="banner warn mt">目前無法使用本機儲存，進度未被保存。</div>` : ""}
+      </div>
+    `;
+    this.bindNav();
+    this.el.querySelectorAll("[data-rate]").forEach(b => b.onclick = () => {
+      st.ttsRate = parseFloat(b.dataset.rate); saveState(this.state); this.renderSettings();
+    });
+    this.el.querySelectorAll("[data-limit]").forEach(b => b.onclick = () => {
+      st.responseTimeLimit = parseInt(b.dataset.limit); saveState(this.state); this.renderSettings();
+    });
+    this.el.querySelectorAll("[data-self]").forEach(b => b.onclick = () => {
+      st.selfMode = b.dataset.self === "1"; saveState(this.state); this.renderSettings();
+    });
+    this.el.querySelector("#clearBtn").onclick = () => {
+      if (confirm("確定清除所有進度？無法復原。") && confirm("再確認一次：分數、連續天數都會歸零。")) {
+        this.state = defaultState(); saveState(this.state);
+        alert("已清除。"); this.go("home");
+      }
+    };
+  }
+};
+
+window.addEventListener("DOMContentLoaded", () => App.init());
+</script>
+</body>
+</html>
